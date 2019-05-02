@@ -1,5 +1,5 @@
 import sys
-# from PyQt5.QtCore import QT_TR_NOOP
+from PyQt5.QtCore import QT_TR_NOOP, QTranslator
 from PyQt5 import QtGui, QtWidgets, uic
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QWidget, QMainWindow, QMessageBox, QApplication
@@ -25,11 +25,11 @@ import pickle
 class Help(QMainWindow):
     def __init__(self, parent=None):
         super(Help, self).__init__(parent)
-        # self.setWindowTitle("Help")
         uic.loadUi("Help.ui", self)
 
 class Settings(QMainWindow):
     def __init__(self, parent=None):
+
         super(Settings, self).__init__(parent)
         uic.loadUi("Settings.ui", self)
         self.cancel.clicked.connect(self.close)
@@ -41,19 +41,35 @@ class Settings(QMainWindow):
         self.left_key.setKeySequence(QKeySequence(parent.model.keys[2]))
         self.right_key.setKeySequence(QKeySequence(parent.model.keys[3]))
 
+        self.language_box.addItem(QT_TR_NOOP("English"), userData="en-en.qm")
+        self.language_box.addItem(QT_TR_NOOP("Russian"), userData="ru-ru.qm")
+        self.language_box.addItem(QT_TR_NOOP("Ukrainian"), userData="ua-ua.qm")
+
+        if hasattr(parent, 'config'):
+            self.language_box.setCurrentIndex(parent.config["lang"][1])
+        else:
+            self.language_box.setCurrentIndex(0)
+
 
     def save_config(self, reload_flag=True):
+        # self.translator = QTranslator()
+        # self.translator.load(self.language_box.currentData())
+        # app.installTranslator(self.translator)
+        # app.refresh()
         conf = {"keys":[self.up_key.keySequence().__getitem__(0),
                         self.down_key.keySequence().__getitem__(0),
                         self.left_key.keySequence().__getitem__(0),
                         self.right_key.keySequence().__getitem__(0)],
                 "sliders":[self.parent.speed_slider.value(),
-                        self.parent.sensitivity_slider.value()]}
+                        self.parent.sensitivity_slider.value()],
+                "lang":[self.language_box.currentData(), self.language_box.currentIndex()]}
         with open("config.bin","wb") as config :
             pickle.dump(conf, config)
         if reload_flag:
             self.parent.model = model(conf["keys"])
         self.close()
+
+
     def set_default(self):
         self.parent.model = model()
         self.save_config(False)
@@ -68,17 +84,21 @@ class GUI(QMainWindow):
     def __init__(self, parent=None):
         self.pressed_keys= []
         super(GUI, self).__init__(parent)
-        uic.loadUi("GUI.ui", self)
+
         try:
             with open("config.bin","rb") as conf :
-                config = pickle.load(conf)
-                self.model = model(config["keys"])
-                self.speed_slider.setValue(config["sliders"][0])
-                self.sensitivity_slider.setValue(config["sliders"][1])
+                self.config = pickle.load(conf)
+                self.model = model(self.config["keys"])
+                self.translator = QTranslator()
+                self.translator.load(self.config["lang"][0])
+                app.installTranslator(self.translator)
         except:
             self.model = model()
 
-
+        uic.loadUi("GUI.ui", self)
+        if hasattr(self, "config"):
+            self.speed_slider.setValue(self.config["sliders"][0])
+            self.sensitivity_slider.setValue(self.config["sliders"][1])
 
         self.setWindowIcon(QtGui.QIcon('3.png'))
 
@@ -110,8 +130,8 @@ class GUI(QMainWindow):
         self.actionAbout.triggered.connect(self.about)
 
 
-        self.connect_button.setStatusTip(self.connect_button.text() + " Arduino")
-        self.refresh_button.setStatusTip("Refresh port list")
+        self.connect_button.setStatusTip(self.connect_button.text() +  QT_TR_NOOP(" Arduino"))
+        self.refresh_button.setStatusTip( QT_TR_NOOP("Refresh port list"))
 
         self.refresh_com()
 
@@ -120,7 +140,6 @@ class GUI(QMainWindow):
     def keyPressEvent(self, event):
         if event.isAutoRepeat() or self.butt_mode_flag.isChecked() or not self.model.check_port():
             return
-        print("pressed")
         self.pressed_keys.append(int(event.key()))
         speed = self.speed_slider.value()
         sens = self.sensitivity_slider.value()
@@ -128,7 +147,8 @@ class GUI(QMainWindow):
         try:
             self.model.send_code(code)
         except:
-            QMessageBox.warning(self, "warning", "please reconnect controller")
+            QMessageBox.critical(self, QT_TR_NOOP("Error"), QT_TR_NOOP("please reconnect controller"))
+            self.pressed_keys = []
             self.disconnect()
 
         self.update()
@@ -137,7 +157,6 @@ class GUI(QMainWindow):
     def keyReleaseEvent(self, event):
         if event.isAutoRepeat() or self.butt_mode_flag.isChecked() or not self.model.check_port():
             return
-        print("relesed")
         self.pressed_keys.remove(int(event.key()))
         speed = self.speed_slider.value()
         sens = self.sensitivity_slider.value()
@@ -145,7 +164,8 @@ class GUI(QMainWindow):
         try:
             self.model.send_code(code)
         except:
-            QMessageBox.warning(self, "warning", "please reconnect controller")
+            QMessageBox.critical(self, QT_TR_NOOP("Error"), QT_TR_NOOP("please reconnect controller"))
+            self.pressed_keys = []
             self.disconnect()
 
 
@@ -171,16 +191,16 @@ class GUI(QMainWindow):
             self.comPorts.addItem(str(i).split(" ")[0])
 
     def about(self):
-        QMessageBox.information(self, "About", "Created by max")
+        QMessageBox.information(self, QT_TR_NOOP("About"), QT_TR_NOOP("Created by max"))
 
     def connect(self):
         # print("*",self.comPorts.currentIndex(),"*")
         if self.auto_connect_flag.checkState():
             port = self.model.auto_connect()
             if not port:
-                self.statusBar().showMessage("Error, plug arduino or try to connect manualy")
+                self.statusBar().showMessage(QT_TR_NOOP("Error, plug arduino or try to connect manualy"))
                 return
-            self.statusBar().showMessage("connected to " + str(port))
+            self.statusBar().showMessage(QT_TR_NOOP("connected to ") + str(port))
         elif self.comPorts.currentIndex() != -1:
             print("value2")
             try:
@@ -189,7 +209,7 @@ class GUI(QMainWindow):
                 self.refresh_com()
                 return
         else:
-            self.statusBar().showMessage("Empty port")
+            self.statusBar().showMessage(QT_TR_NOOP("Empty port"))
             return
         print("**")
         self.speed_slider.setEnabled(True)
@@ -202,8 +222,8 @@ class GUI(QMainWindow):
         self.auto_connect_flag.setEnabled(False)
 
 
-        self.connect_button.setText("Disconnect")
-        self.connect_button.setStatusTip(self.connect_button.text() + " Arduino")
+        self.connect_button.setText(QT_TR_NOOP("Disconnect"))
+        self.connect_button.setStatusTip(self.connect_button.text() + QT_TR_NOOP(" Arduino"))
 
         self.connect_button.clicked.connect(self.disconnect)
 
@@ -220,14 +240,14 @@ class GUI(QMainWindow):
 
         self.model.port.close()
 
-        self.connect_button.setText("Connect")
+        self.connect_button.setText(QT_TR_NOOP("Connect"))
         self.connect_button.setStatusTip(self.connect_button.text() + " Arduino")
 
         self.connect_button.clicked.connect(self.connect)
 
     def controll_btn_ll(self):
-        self.statusBar().showMessage("Button mode " +\
-                ("enabled" if self.butt_mode_flag.isChecked() else "disabled"))
+        self.statusBar().showMessage(QT_TR_NOOP("Button mode ") +\
+                (QT_TR_NOOP("enabled") if self.butt_mode_flag.isChecked() else QT_TR_NOOP("disabled")))
         if self.butt_mode_flag.isChecked():
             self.left_btn.setEnabled(True)
             self.right_btn.setEnabled(True)
@@ -264,7 +284,7 @@ class GUI(QMainWindow):
         try:
             self.model.send_code(code)
         except:
-            QMessageBox.warning(self, "warning", "please reconnect controller")
+            QMessageBox.warning(self, QT_TR_NOOP("warning"), QT_TR_NOOP("please reconnect controller"))
             self.disconnect()
 
 
@@ -274,5 +294,9 @@ class GUI(QMainWindow):
 if __name__ == '__main__':
     # print(QT_TR_NOOP("Goodbye"))
     app = QtWidgets.QApplication(sys.argv)
+    # app.refresh()
+    # tr = QTranslator()
+    # tr.load("en-en.qm")
+    # app.installTranslator(tr)
     window = GUI()
     sys.exit(app.exec())
