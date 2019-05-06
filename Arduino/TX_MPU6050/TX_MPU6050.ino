@@ -83,7 +83,7 @@ float filter_b(float val) {
 
 
 int ignore_threshold = 2300;
-int ignore_threshold_rotation = 4200;
+int ignore_threshold_rotation = 7000;
 float ax, ay;
 
 void loop() {
