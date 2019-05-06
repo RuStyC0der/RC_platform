@@ -55,7 +55,7 @@ class Settings(QMainWindow):
         # self.translator = QTranslator()
         # self.translator.load(self.language_box.currentData())
         # app.installTranslator(self.translator)
-        # app.refresh()
+        # self.parent.update()# TODO: find method to update without reload
         conf = {"keys":[self.up_key.keySequence().__getitem__(0),
                         self.down_key.keySequence().__getitem__(0),
                         self.left_key.keySequence().__getitem__(0),
