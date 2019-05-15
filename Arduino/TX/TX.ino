@@ -8,11 +8,25 @@
 #define PARSE_AMOUNT 6       // число значений в массиве, который хотим получить
 #define INPUT_AMOUNT 20      // максимальное количество символов в пакете, который идёт в сериал
 char inputData[INPUT_AMOUNT];  // массив входных значений (СИМВОЛЫ)
-byte intData[PARSE_AMOUNT];     // массив численных значений после парсинга
+byte intData[PARSE_AMOUNT + 1];     // массив численных значений после парсинга
 boolean recievedFlag;
 boolean getStarted;
 byte index;
 String string_convert;
+
+
+byte security_key = 121; // Security key value must be same on transmitter and receiver
+
+
+/* Control has 6 item,
+0 is forward
+1 is back
+2 is left flag
+3 is right flag
+4 is motor power
+5 is rotation sensivity
+6 is constant for noise cut and security
+*/
 
 
 #include <SPI.h>          // библиотека для работы с шиной SPI
@@ -75,6 +89,7 @@ void setup() {
 
   radio.powerUp(); //начать работу
   radio.stopListening();  //не слушаем радиоэфир, мы передатчик
+  intData[6] = security_key;
 }
 
 void loop() {
@@ -82,16 +97,17 @@ void loop() {
     parsing();
     if (recievedFlag) {                           // если получены данные
     recievedFlag = false;
+    // dataArray[]
     radio.write(&intData, sizeof(intData));
-    Serial.print(intData[0]);
-    Serial.print(" ");
-    Serial.print(intData[1]);
-    Serial.print(" ");
-    Serial.print(intData[2]);
-    Serial.print(" ");
-    Serial.print(intData[3]);
-    Serial.print(" ");
-    Serial.println(intData[4]);
+    // Serial.print(intData[0]);
+    // Serial.print(" ");
+    // Serial.print(intData[1]);
+    // Serial.print(" ");
+    // Serial.print(intData[2]);
+    // Serial.print(" ");
+    // Serial.print(intData[3]);
+    // Serial.print(" ");
+    // Serial.println(intData[4]);
 }
 
   }

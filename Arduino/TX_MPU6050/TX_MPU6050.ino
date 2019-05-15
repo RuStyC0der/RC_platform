@@ -5,6 +5,20 @@
 #include "MPU6050.h"
 
 
+
+byte security_key = 121; // Security key value must be same on transmitter and receiver
+
+byte dataArray[7];
+/* Control has 6 item,
+0 is forward
+1 is back
+2 is left flag
+3 is right flag
+4 is motor power
+5 is rotation sensivity
+6 is constant for noise cut and security
+*/
+
 RF24 radio(9, 10); // "создать" модуль на пинах 9 и 10 Для Уно
 //RF24 radio(9,53); // для Меги
 MPU6050 accel;
@@ -92,7 +106,7 @@ void loop() {
 
   accel.getMotion6(&ax_raw, &ay_raw, &az_raw, &gx_raw, &gy_raw, &gz_raw);
 
-  byte data[6] = {0,0,0,0,0,0};
+  byte data[7] = {0,0,0,0,0,0,security_key};
 
   ax = filter_a(constrain(ax_raw, -16000, 16000));
   ay = filter_b(constrain(ay_raw, -16000, 16000));
