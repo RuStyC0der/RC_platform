@@ -83,6 +83,7 @@ float filter_b(float val) {
 
 
 int ignore_threshold = 2300;
+int rot_threshold = 4300;
 float ax, ay;
 
 void loop() {
@@ -95,14 +96,15 @@ void loop() {
 
   ax = filter_a(constrain(ax_raw, -16000, 16000));
   ay = filter_b(constrain(ay_raw, -16000, 16000));
-  if (abs(ay) > ignore_threshold){
+  if (abs(ay) > rot_threshold){
     if (ay < 0){
       data[2] = 1;
     }
     else{
       data[3] = 1;
     }
-    data[5] = map(abs(ay), 0,14000,200,255);
+    // data[5] = map(abs(ay), 0,14000,200,255); from good motors
+    data[5] = 255;
   }
 
 
