@@ -5,6 +5,23 @@
 #include "MPU6050.h"
 
 
+<<<<<<< HEAD
+=======
+
+#define SECURITY_KEY 121 // Security key value must be same on transmitter and receiver
+
+byte dataArray[7];
+/* Control has 6 item,
+0 is forward
+1 is back
+2 is left flag
+3 is right flag
+4 is motor power
+5 is rotation sensivity
+6 is constant for noise cut and security
+*/
+
+>>>>>>> 553b1dc... added fixes and optimisation for noise def mode
 RF24 radio(9, 10); // "создать" модуль на пинах 9 и 10 Для Уно
 //RF24 radio(9,53); // для Меги
 MPU6050 accel;
@@ -86,13 +103,20 @@ int ignore_threshold = 2300;
 int rot_threshold = 4300;
 float ax, ay;
 
+// byte data[7] = {0,0,0,0,0,0,security_key};
+byte data[7] = {0,0,0,0,0,0,SECURITY_KEY};
+
+
 void loop() {
   int16_t ax_raw, ay_raw, az_raw, gx_raw, gy_raw, gz_raw;
   float ay,gx;
 
   accel.getMotion6(&ax_raw, &ay_raw, &az_raw, &gx_raw, &gy_raw, &gz_raw);
 
+<<<<<<< HEAD
   byte data[6] = {0,0,0,0,0,0};
+=======
+>>>>>>> 553b1dc... added fixes and optimisation for noise def mode
 
   ax = filter_a(constrain(ax_raw, -16000, 16000));
   ay = filter_b(constrain(ay_raw, -16000, 16000));
@@ -119,6 +143,9 @@ void loop() {
     data[4] = map(abs(ax), 0,16000,40,255);
   }
 
+
+
+
     radio.write(&data, sizeof(data));
     // Serial.print(data[0]);
     // Serial.print(" ");
@@ -130,5 +157,9 @@ void loop() {
     // Serial.print(" ");
     // Serial.print(data[4]);
     // Serial.print(" ");
-    // Serial.println(data[5]);
+    // Serial.print(data[5]);
+    // Serial.print(" ");
+    // Serial.println(data[6]);
+    memset(data, 0, 6);
+
   }

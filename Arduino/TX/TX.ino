@@ -9,6 +9,24 @@ byte index;
 String string_convert;
 
 
+<<<<<<< HEAD
+=======
+#define SECURITY_KEY 121 // Security key value must be same on transmitter and receiver
+
+
+
+/* Control has 6 item,
+0 is forward
+1 is back
+2 is left flag
+3 is right flag
+4 is motor power
+5 is rotation sensivity
+6 is constant for noise cut and security
+*/
+
+
+>>>>>>> 553b1dc... added fixes and optimisation for noise def mode
 #include <SPI.h>          // библиотека для работы с шиной SPI
 #include "nRF24L01.h"     // библиотека радиомодуля
 #include "RF24.h"         // ещё библиотека радиомодуля
@@ -60,7 +78,7 @@ void setup() {
   radio.setPayloadSize(32);     //размер пакета, в байтах
 
   radio.openWritingPipe(address[0]);   //мы - труба 0, открываем канал для передачи данных
-  radio.setChannel(0x60);  //выбираем канал (в котором нет шумов!)
+  radio.setChannel(0x65);  //выбираем канал (в котором нет шумов!)
 
   radio.setPALevel (RF24_PA_HIGH); //уровень мощности передатчика. На выбор RF24_PA_MIN, RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX
   radio.setDataRate (RF24_1MBPS); //скорость обмена. На выбор RF24_2MBPS, RF24_1MBPS, RF24_250KBPS
