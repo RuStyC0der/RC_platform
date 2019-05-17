@@ -140,7 +140,7 @@ void loop() {
   }
 
     radio.write(&data, sizeof(data));
-
+    Serial.println(data[4]);
     memset(data, 0, 6);
 
   }

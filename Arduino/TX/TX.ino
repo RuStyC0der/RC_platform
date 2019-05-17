@@ -13,7 +13,7 @@ String string_convert;
 
 
 
-/* Control has 6 item,
+/* Control has 7 item,
 0 is forward
 1 is back
 2 is left flag
