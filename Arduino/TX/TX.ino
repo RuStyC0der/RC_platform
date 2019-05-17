@@ -90,7 +90,7 @@ void setup() {
 
   radio.powerUp(); //начать работу
   radio.stopListening();  //не слушаем радиоэфир, мы передатчик
-  intData[6] = security_key;
+  intData[6] = SECURITY_KEY;
 }
 
 void loop() {
@@ -100,15 +100,15 @@ void loop() {
     recievedFlag = false;
     // dataArray[]
     radio.write(&intData, sizeof(intData));
-    // Serial.print(intData[0]);
-    // Serial.print(" ");
-    // Serial.print(intData[1]);
-    // Serial.print(" ");
-    // Serial.print(intData[2]);
-    // Serial.print(" ");
-    // Serial.print(intData[3]);
-    // Serial.print(" ");
-    // Serial.println(intData[4]);
+    Serial.print(intData[0]);
+    Serial.print(" ");
+    Serial.print(intData[1]);
+    Serial.print(" ");
+    Serial.print(intData[2]);
+    Serial.print(" ");
+    Serial.print(intData[3]);
+    Serial.print(" ");
+    Serial.println(intData[4]);
 }
 
   }
