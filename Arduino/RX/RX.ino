@@ -7,7 +7,7 @@
 RF24 radio(9,10); // "создать" модуль на пинах 9 и 10 Для Уно
 //RF24 radio(9,53); // для Меги
 
-byte security_key = 121; // Security key value must be same on transmitter and receiver
+#define SECURITY_KEY 121 // Security key value must be same on transmitter and receiver
 
 byte dataArray[7];
 /* Control has 6 item,
@@ -49,7 +49,7 @@ void setup(){
   pinMode(rotation_f, OUTPUT);
   pinMode(rotation_s, OUTPUT);
 
-  pinMode(noise_led, OUTPUT);
+  // pinMode(noise_led, OUTPUT);
 
   Serial.begin(9600); // INFO: enable this when you wont to debug
   radio.begin(); //активировать модуль
@@ -59,7 +59,7 @@ void setup(){
   radio.setPayloadSize(32);     //размер пакета, в байтах
 
   radio.openReadingPipe(1,address[0]);      //хотим слушать трубу 0
-  radio.setChannel(0x65);  //выбираем канал (в котором нет шумов!)
+  radio.setChannel(0x60);  //выбираем канал (в котором нет шумов!)
 
   radio.setPALevel (RF24_PA_HIGH); //уровень мощности передатчика. На выбор RF24_PA_MIN, RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX
   radio.setDataRate (RF24_1MBPS); //скорость обмена. На выбор RF24_2MBPS, RF24_1MBPS, RF24_250KBPS
@@ -123,8 +123,8 @@ void loop() {
       // Serial.print(dataArray[4]);
       // Serial.print(" ");
       // Serial.println(dataArray[5]);
-      if (dataArray[6] == security_key){
-        digitalWrite(noise_led, LOW);
+      if (dataArray[6] == SECURITY_KEY){
+        // digitalWrite(noise_led, LOW);
         if (dataArray[0] == dataArray[1]){
           Stop_move();
           // Serial.print("stop");
@@ -153,7 +153,7 @@ void loop() {
 
         }
       }else{
-        digitalWrite(noise_led, HIGH);
+        // digitalWrite(noise_led, HIGH);
       }
     }
 }
