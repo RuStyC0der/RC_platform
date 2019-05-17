@@ -9,8 +9,6 @@ byte index;
 String string_convert;
 
 
-<<<<<<< HEAD
-=======
 #define SECURITY_KEY 121 // Security key value must be same on transmitter and receiver
 
 
@@ -26,7 +24,6 @@ String string_convert;
 */
 
 
->>>>>>> 553b1dc... added fixes and optimisation for noise def mode
 #include <SPI.h>          // библиотека для работы с шиной SPI
 #include "nRF24L01.h"     // библиотека радиомодуля
 #include "RF24.h"         // ещё библиотека радиомодуля

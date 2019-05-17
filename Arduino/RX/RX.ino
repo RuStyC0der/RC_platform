@@ -7,13 +7,11 @@
 RF24 radio(9,10); // "создать" модуль на пинах 9 и 10 Для Уно
 //RF24 radio(9,53); // для Меги
 
-<<<<<<< HEAD
-byte dataArray[6];
-=======
+
 #define SECURITY_KEY 121 // Security key value must be same on transmitter and receiver
 
 byte dataArray[7];
->>>>>>> 553b1dc... added fixes and optimisation for noise def mode
+
 /* Control has 6 item,
 0 is forward
 1 is back
@@ -21,6 +19,7 @@ byte dataArray[7];
 3 is right flag
 4 is motor power
 5 is rotation sensivity
+6 is a security key
 */
 
 // change values in this block to your values)
@@ -39,10 +38,7 @@ int rotation_s = 2;
 byte address[][6] = {"1Node","2Node","3Node","4Node","5Node","6Node"};  //возможные номера труб
 
 void setup(){
-  // TCCR0A = TCCR0A & 0xe0 | 1;
-  // TCCR0B = TCCR0B & 0xe0 | 0x09;
-  // TCCR0A = TCCR0A & 0xe0 | 1;
-  // TCCR0B = TCCR0B & 0xe0 | 0x0d;
+
   pinMode(motor_pwm, OUTPUT);
   pinMode(rotation_pwm, OUTPUT);
 
@@ -52,13 +48,8 @@ void setup(){
   pinMode(rotation_f, OUTPUT);
   pinMode(rotation_s, OUTPUT);
 
-<<<<<<< HEAD
-  Serial.begin(9600); //открываем порт для связи с ПК
-=======
-  // pinMode(noise_led, OUTPUT);
-
   Serial.begin(9600); // INFO: enable this when you wont to debug
->>>>>>> 553b1dc... added fixes and optimisation for noise def mode
+
   radio.begin(); //активировать модуль
   radio.setAutoAck(1);         //режим подтверждения приёма, 1 вкл 0 выкл
   radio.setRetries(0,15);     //(время между попыткой достучаться, число попыток)
@@ -119,77 +110,28 @@ void loop() {
     byte pipeNo;
     while( radio.available(&pipeNo)){    // слушаем эфир со всех труб
       radio.read( &dataArray, sizeof(dataArray) );         // чиатем входящий сигнал
-      // Serial.print(dataArray[0]);
-      // Serial.print(" ");
-      // Serial.print(dataArray[1]);
-      // Serial.print(" ");
-      // Serial.print(dataArray[2]);
-      // Serial.print(" ");
-      // Serial.print(dataArray[3]);
-      // Serial.print(" ");
-      // Serial.print(dataArray[4]);
-      // Serial.print(" ");
-      // Serial.println(dataArray[5]);
-<<<<<<< HEAD
-      if (dataArray[0] == dataArray[1]){
-        Stop_move();
-        // Serial.print("stop");
-        // Serial.print(" ");
 
-      }else if (dataArray[0]){
-        Forward();
-        // Serial.print("forvard");
-        // Serial.print(" ");
-      }else if (dataArray[1]){
-        Back();
-        // Serial.print("back");
-        // Serial.print(" ");
-      }
-
-      if (dataArray[2] == dataArray[3]){
-        Stop_rotation();
-        // Serial.println("stop");
-      }else if (dataArray[2]){
-        Left();
-        // Serial.println("left");
-
-      }else if (dataArray[3]){
-        Right();
-        // Serial.println("right");
-
-=======
       if (dataArray[6] == SECURITY_KEY){
-        // digitalWrite(noise_led, LOW);
         if (dataArray[0] == dataArray[1]){
           Stop_move();
-          // Serial.print("stop");
-          // Serial.print(" ");
+
 
         }else if (dataArray[0]){
           Forward();
-          // Serial.print("forvard");
-          // Serial.print(" ");
         }else if (dataArray[1]){
           Back();
-          // Serial.print("back");
-          // Serial.print(" ");
         }
 
         if (dataArray[2] == dataArray[3]){
           Stop_rotation();
-          // Serial.println("stop");
         }else if (dataArray[2]){
           Left();
-          // Serial.println("left");
 
         }else if (dataArray[3]){
           Right();
-          // Serial.println("right");
 
         }
       }else{
-        // digitalWrite(noise_led, HIGH);
->>>>>>> 553b1dc... added fixes and optimisation for noise def mode
       }
     }
 }
