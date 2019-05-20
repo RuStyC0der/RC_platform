@@ -2,7 +2,7 @@
 #define PARSE_AMOUNT 6       // число значений в массиве, который хотим получить
 #define INPUT_AMOUNT 20      // максимальное количество символов в пакете, который идёт в сериал
 char inputData[INPUT_AMOUNT];  // массив входных значений (СИМВОЛЫ)
-byte intData[PARSE_AMOUNT];     // массив численных значений после парсинга
+byte intData[PARSE_AMOUNT + 1];     // массив численных значений после парсинга
 boolean recievedFlag;
 boolean getStarted;
 byte index;
@@ -84,6 +84,7 @@ void setup() {
 
   radio.powerUp(); //начать работу
   radio.stopListening();  //не слушаем радиоэфир, мы передатчик
+  intData[6] = SECURITY_KEY;
 }
 
 void loop() {

@@ -57,7 +57,7 @@ void setup(){
   radio.setPayloadSize(32);     //размер пакета, в байтах
 
   radio.openReadingPipe(1,address[0]);      //хотим слушать трубу 0
-  radio.setChannel(0x60);  //выбираем канал (в котором нет шумов!)
+  radio.setChannel(0x65);  //выбираем канал (в котором нет шумов!)
 
   radio.setPALevel (RF24_PA_HIGH); //уровень мощности передатчика. На выбор RF24_PA_MIN, RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX
   radio.setDataRate (RF24_1MBPS); //скорость обмена. На выбор RF24_2MBPS, RF24_1MBPS, RF24_250KBPS
@@ -110,7 +110,8 @@ void loop() {
     byte pipeNo;
     while( radio.available(&pipeNo)){    // слушаем эфир со всех труб
       radio.read( &dataArray, sizeof(dataArray) );         // чиатем входящий сигнал
-
+      Serial.print(dataArray[0]);
+      Serial.println(dataArray[6]);
       if (dataArray[6] == SECURITY_KEY){
         if (dataArray[0] == dataArray[1]){
           Stop_move();
